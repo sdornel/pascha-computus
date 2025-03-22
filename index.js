@@ -2,15 +2,14 @@ let alpha;
 let beta;
 let gamma;
 
-const case_KyrioPascha = 0;
-const case_Holyweek = 0;
-const case_Brightweek = 0;
+let case_KyrioPascha = 0;
+let case_Holyweek = 0;
+let case_Brightweek = 0;
 
 let year;
 let PaschaMonth;
 let PaschaDay;
 let delta;
-// let Eva = 0;
 
 const daysOfWeek = ["Kyriaki (Sunday)", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -66,7 +65,7 @@ function computus(year) {
 
     let index; // locate value of index of current Paschal Moon within Saint Dyonisius array
     for (index = 0; index <= 29; index++) {
-        if (SaintDyonisiusArray[index][1] === PaschalMoonsArray[1][beta]) {
+        if (SaintDyonisiusArray[index][1] === PaschalMoonsArray[beta][1]) {
             break;
         }
     }
@@ -76,8 +75,8 @@ function computus(year) {
     const indexPaschalMoon = (EvangelismosArray[alpha] + delta) % 7;
     const daysToPascha = 7 - indexPaschalMoon;
     
-    const PaschalMoonMonth = PaschalMoonsArray[0][beta];
-    const PaschalMoonDate = PaschalMoonsArray[1][beta];
+    const PaschalMoonMonth = PaschalMoonsArray[beta][0];
+    const PaschalMoonDate = PaschalMoonsArray[beta][1];
 
     // if (PaschaDay === 7) debugger;
     if (PaschalMoonMonth === 3) {
@@ -127,19 +126,18 @@ function printPaschalMoon() {
 }
 
 function printPascha() {
-    // debugger
     let paschaInfo = 'Pascha: ';
     if (PaschaMonth === 3) {
         paschaInfo += "March";
     } else {
         paschaInfo += "April";
     }
-    // console.log(" " + PaschaDay);
 
-    if ((!daysOfWeek[EvangelismosArray[alpha]] === "Kyriaki (Sunday)") && ((beta == 4) || (beta == 12) || (beta == 15)) ) {
-        console.log(", KyrioPascha");
+    if ((daysOfWeek[EvangelismosArray[alpha]] === "Kyriaki (Sunday)") && ((beta == 4) || (beta == 12) || (beta == 15)) ) {
+        console.log(paschaInfo + ` ${PaschaDay}` + ", KyrioPascha");
+    } else {
+        console.log(paschaInfo + ` ${PaschaDay}`);
     }
-    console.log(paschaInfo + ` ${PaschaDay}`);
 }
 
 function printEvangelismos() {
@@ -218,35 +216,16 @@ function defineSaintDionysiusArray() {
 function definePaschalMoonsArray() {
     // beta 0 needs to be initialized to April 5 (index 15 of Saint Dyonisius array)
     let j = 15;
-    console.log('-=-==-=-=-=-=-=-=-=-=-=');
-    console.log('PaschalMoonsArray', PaschalMoonsArray);
-    console.log('SaintDyonisiusArray', SaintDyonisiusArray);
-    // [
-    //     [ 3, 21 ], [ 3, 22 ], [ 3, 23 ],
-    //     [ 3, 24 ], [ 3, 25 ], [ 3, 26 ],
-    //     [ 3, 27 ], [ 3, 28 ], [ 3, 29 ],
-    //     [ 3, 30 ], [ 3, 31 ], [ 4, 1 ],
-    //     [ 4, 2 ],  [ 4, 3 ],  [ 4, 4 ],
-    //     [ 4, 5 ],  [ 4, 6 ],  [ 4, 7 ],
-    //     [ 4, 8 ],  [ 4, 9 ],  [ 4, 10 ],
-    //     [ 4, 11 ], [ 4, 12 ], [ 4, 13 ],
-    //     [ 4, 14 ], [ 4, 15 ], [ 4, 16 ],
-    //     [ 4, 17 ], [ 4, 18 ], [ 4, 19 ]
-    //   ]
-    [[],[]]
+
     // generate the 19 Year Paschal Cycle using SaintDyonisiusArray
     for (let i = 0; i <= 18; i++) {
         PaschalMoonsArray[i] = [null, null];
         PaschalMoonsArray[i][0] = SaintDyonisiusArray[j][0];
         PaschalMoonsArray[i][1] = SaintDyonisiusArray[j][1];
-        // PaschalMoonsArray[i][0].push(SaintDyonisiusArray[j][0]);
-        // PaschalMoonsArray[i][1].push(SaintDyonisiusArray[j][1]);
-
 
         j = j + 19;
         j = j % 30;    
     }
-    console.log('PaschalMoonsArray', PaschalMoonsArray);
 }
 
 main();
