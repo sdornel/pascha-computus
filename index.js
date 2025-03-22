@@ -57,40 +57,41 @@ function main() {
 }
 
 function computus(year) {
-    const alpha = year % 28;
-    const beta = year % 19;
-    const gamma = year % 532;
+    alpha = year % 28;
+    beta = year % 19;
+    gamma = year % 532;
 
-    console.log('(' + gamma + ') Year' );
+    console.log('(' + gamma + ') Year ' + year);
     console.log('; alpha = ' + alpha, ', beta = ' + beta);
 
     let index; // locate value of index of current Paschal Moon within Saint Dyonisius array
     for (index = 0; index <= 29; index++) {
-        if (SaintDyonisiusArray[1][index] === PaschalMoonsArray[1][beta]) {
+        if (SaintDyonisiusArray[index][1] === PaschalMoonsArray[1][beta]) {
             break;
         }
     }
 
-    const delta = (index + 3) % 7;
+    delta = (index + 3) % 7;
 
     const indexPaschalMoon = (EvangelismosArray[alpha] + delta) % 7;
     const daysToPascha = 7 - indexPaschalMoon;
     
     const PaschalMoonMonth = PaschalMoonsArray[0][beta];
-    // const PaschalMoonDate = PaschalMoonsArray[beta][1];
+    const PaschalMoonDate = PaschalMoonsArray[1][beta];
 
+    // if (PaschaDay === 7) debugger;
     if (PaschalMoonMonth === 3) {
-        PaschaMonth = SaintDyonisiusArray[0][index + daysToPascha];
-        PaschaDay = SaintDyonisiusArray[1][index + daysToPascha];
+        PaschaMonth = SaintDyonisiusArray[index + daysToPascha][0];
+        PaschaDay = SaintDyonisiusArray[index + daysToPascha][1];
     }
     
     if (PaschalMoonMonth === 4) {
         PaschaMonth = 4;
-        PaschaDay = SaintDyonisiusArray[1][index] + daysToPascha;
+        PaschaDay = SaintDyonisiusArray[index][1] + daysToPascha;
     }
 
       // print the Paschal Moon, Evangelismos, Pascha in their order of occurence
-    if ((PaschalMoonsArray[1][beta] >= 21) && (PaschalMoonsArray[1][beta] <= 24)) {
+    if ((PaschalMoonsArray[beta][1] >= 21) && (PaschalMoonsArray[beta][1] <= 24)) {
         printPaschalMoon();
 
         // paschal moon, pascha, evangelismos
@@ -115,28 +116,30 @@ function computus(year) {
 
 function printPaschalMoon() {
     let paschalMoonOutput = "Paschal Moon: ";
-    if (PaschalMoonsArray[0][beta] === 3) {
-        paschalMoonOutput += "March";
+    if (PaschalMoonsArray[beta][0] === 3) {
+        paschalMoonOutput += "March " + PaschalMoonsArray[beta][1] + ", " + daysOfHolyWeek[(EvangelismosArray[alpha] + delta) % 7];
     }
-    if (PaschalMoonsArray[0][beta] === 4) {
+    if (PaschalMoonsArray[beta][0] === 4) {
         // print the day of the week of the Paschal Moon
-        paschalMoonOutput += "April " + PaschalMoonsArray[1][beta] + ", " + daysOfHolyWeek[(EvangelismosArray[alpha] + delta) % 7];
+        paschalMoonOutput += "April " + PaschalMoonsArray[beta][1] + ", " + daysOfHolyWeek[(EvangelismosArray[alpha] + delta) % 7];
     }
     console.log(paschalMoonOutput);
 }
 
 function printPascha() {
-    let PaschaDay = "Pascha: ";
-    if (PaschaMonth == 3) {
-        PaschaDay += "March";
+    // debugger
+    let paschaInfo = 'Pascha: ';
+    if (PaschaMonth === 3) {
+        paschaInfo += "March";
     } else {
-        PaschaDay += "April";
+        paschaInfo += "April";
     }
-    console.log(" " + PaschaDay);
+    // console.log(" " + PaschaDay);
 
     if ((!daysOfWeek[EvangelismosArray[alpha]] === "Kyriaki (Sunday)") && ((beta == 4) || (beta == 12) || (beta == 15)) ) {
         console.log(", KyrioPascha");
     }
+    console.log(paschaInfo + ` ${PaschaDay}`);
 }
 
 function printEvangelismos() {
@@ -148,23 +151,24 @@ function printEvangelismos() {
 
         // Evangelismos is in Bright Week
         if (PaschaDay < 25) {
-            cout << daysOfBrightWeek[EvangelismosArray[alpha]];
+            evangelismosDay += daysOfBrightWeek[EvangelismosArray[alpha]];
             case_Brightweek++;
         }
 
         // Evangelismos is in Holy Week
         if (PaschaDay > 25) {
-            cout << daysOfHolyWeek[EvangelismosArray[alpha]];
+            evangelismosDay += daysOfHolyWeek[EvangelismosArray[alpha]];
             case_Holyweek++;
         }
 
         // if Pascha = March 25 it is KyrioPascha
         if (PaschaDay === 25) {
-            cout << daysOfBrightWeek[EvangelismosArray[alpha]];
+            evangelismosDay += daysOfBrightWeek[EvangelismosArray[alpha]];
             case_KyrioPascha++;
         }
         evangelismosDay += " year: \t" + year + "\t*";
     } else {
+        // Pascha is in April
         if (PaschaDay <= 2) {
             Eva++;
             evangelismosDay += "+Evangelismos: March 25, ";
@@ -180,7 +184,7 @@ function printEvangelismos() {
             evangelismosDay += "Lazarus Saturday";
         }
         // Evangelismos is in regular week
-        if (PaschaDay) {
+        if (PaschaDay >= 3) {
             evangelismosDay += "Evangelismos: March 25, " + daysOfWeek[EvangelismosArray[alpha]];
         } else {
             evangelismosDay += " year: \t" + year + "\t*";
@@ -191,7 +195,8 @@ function printEvangelismos() {
 
 function defineEvangelismosArray() {
     for (let i = 0; i <= 27; i++) {
-        EvangelismosArray[i] = (4 + i + (i / 4)) % 7;
+        //  we need parseInt to remove decimals
+        EvangelismosArray[i] = (4 + i + parseInt((i / 4))) % 7;
     }
 }
 
@@ -213,15 +218,35 @@ function defineSaintDionysiusArray() {
 function definePaschalMoonsArray() {
     // beta 0 needs to be initialized to April 5 (index 15 of Saint Dyonisius array)
     let j = 15;
+    console.log('-=-==-=-=-=-=-=-=-=-=-=');
     console.log('PaschalMoonsArray', PaschalMoonsArray);
+    console.log('SaintDyonisiusArray', SaintDyonisiusArray);
+    // [
+    //     [ 3, 21 ], [ 3, 22 ], [ 3, 23 ],
+    //     [ 3, 24 ], [ 3, 25 ], [ 3, 26 ],
+    //     [ 3, 27 ], [ 3, 28 ], [ 3, 29 ],
+    //     [ 3, 30 ], [ 3, 31 ], [ 4, 1 ],
+    //     [ 4, 2 ],  [ 4, 3 ],  [ 4, 4 ],
+    //     [ 4, 5 ],  [ 4, 6 ],  [ 4, 7 ],
+    //     [ 4, 8 ],  [ 4, 9 ],  [ 4, 10 ],
+    //     [ 4, 11 ], [ 4, 12 ], [ 4, 13 ],
+    //     [ 4, 14 ], [ 4, 15 ], [ 4, 16 ],
+    //     [ 4, 17 ], [ 4, 18 ], [ 4, 19 ]
+    //   ]
+    [[],[]]
     // generate the 19 Year Paschal Cycle using SaintDyonisiusArray
     for (let i = 0; i <= 18; i++) {
-        PaschalMoonsArray[0][i] = SaintDyonisiusArray[0][j];
-        PaschalMoonsArray[1][i] = SaintDyonisiusArray[0][j];
+        PaschalMoonsArray[i] = [null, null];
+        PaschalMoonsArray[i][0] = SaintDyonisiusArray[j][0];
+        PaschalMoonsArray[i][1] = SaintDyonisiusArray[j][1];
+        // PaschalMoonsArray[i][0].push(SaintDyonisiusArray[j][0]);
+        // PaschalMoonsArray[i][1].push(SaintDyonisiusArray[j][1]);
+
 
         j = j + 19;
         j = j % 30;    
     }
+    console.log('PaschalMoonsArray', PaschalMoonsArray);
 }
 
 main();
